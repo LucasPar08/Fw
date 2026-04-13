@@ -123,6 +123,30 @@ export default function Register() {
     if (form.role === "renter" && !form.licencia) {
       return setError("Ingresá tu número de licencia de conducir.");
     }
+
+    if (!/^\d+$/.test(form.phone) || form.phone.length < 8) {
+      setError("El teléfono no es válido.");
+      return;
+    }
+
+    if (!/^\d+$/.test(form.dni) || form.dni.length < 8 || form.dni.length > 8) {
+      setError("El DNI debe tener entre 7 y 8 números.");
+      return;
+    }
+    
+    if (form.role === "renter") {
+      if (!form.licencia || form.licencia.length < 8) {
+        setError("La licencia no es válida.");
+        return;
+      }
+    }
+    if (form.role === "renter") {
+      if (form.dni !== form.licencia) {
+        setError("El DNI y la licencia deben coincidir.");
+        alert("El DNI y la licencia deben coincidir.");
+        return;
+      }
+    }
     if (form.password.length < 8) {
       return setError("La contraseña debe tener al menos 8 caracteres.");
     }

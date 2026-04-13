@@ -40,7 +40,7 @@ export default function Login() {
   const { loginWithCredentials } = useAuth();
   const navigate = useNavigate();
   const { isMobile } = useIsMobile();
-  const [form, setForm] = useState({ email:"", password:"" });
+  const [form, setForm] = useState({ email:"", password:"" , documento:"" , year:"" });
   const [error, setError] = useState("");
 
   const handleSubmit = () => {
@@ -48,6 +48,25 @@ export default function Login() {
       setError("Completá todos los campos.");
       return;
     }
+
+    if (!/^\d+$/.test(form.documento) || form.documento.length < 7) {
+      setError("El documento debe tener al menos 7 números.");
+      return;
+    }
+
+    const year = Number(form.year);
+    const currentYear = new Date().getFullYear();
+  
+    if (form.year) {
+      const year = Number(form.year);
+      const currentYear = new Date().getFullYear();
+  
+      if (year < 1930 || year > currentYear) {
+        setError("Año inválido.");
+        return;
+      }
+    }
+  
     const result = loginWithCredentials(form.email, form.password);
     if (!result.success) { setError(result.error); return; }
     const savedUser = JSON.parse(localStorage.getItem("fw_user"));
