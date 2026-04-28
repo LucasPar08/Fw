@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import { getListings } from "../../services/api";
 
 const CATEGORIES = [
   { id: "Todos", label: "Todos" },
@@ -21,12 +22,19 @@ export default function Home() {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef({});
+  const [listings, setListings] = useState([]);
+  const [loadingListings, setLoadingListings] = useState(true);
 
-  const allCars = [
-    ...JSON.parse(localStorage.getItem("fw_all_cars") || "[]"),
-    ...JSON.parse(localStorage.getItem("fw_my_cars") || "[]")
-      .filter(c => c.approved && !c.banned),
-  ];
+   useEffect(() => {
+    getListings()
+      .then((data) => {
+        setListings(Array.isArray(data) ? data : []);
+      })
+      .catch(() => setListings([]))
+      .finally(() => setLoadingListings(false));
+  }, []);
+
+  const allCars = listings;
 
   const filtered = allCars.filter(c => {
     const matchSearch = !search ||
